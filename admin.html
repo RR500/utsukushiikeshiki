@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理人室</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+        <a href="index.html">Home</a>
+        <a href="gallery.html">Keshiki</a>
+        <a href="post.html">Post</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <main class="container" id="login-screen" style="font-size: 1.21em; padding-top: 0.3rem;">
+        <div class="section-title">
+            <h1>管理人室</h1>
+        </div>
+        <div class="frame" style="display: flex; flex-direction: column; gap: 1rem; max-width: 300px; margin: 0 auto;">
+            <input type="password" id="admin-password" placeholder="password" style="width: 100%; padding: 0.75rem;">
+            <p id="admin-error" style="display: none; font-size: 0.8rem; opacity: 0.5; text-align: center;">パスワードが違います</p>
+            <button id="admin-login">入室する</button>
+        </div>
+    </main>
+
+    <main class="container wide" id="admin-room" style="font-size: 1.21em; display: none; padding-top: 0.3rem;">
+        <div class="section-title">
+            <h1>管理人室</h1>
+            <p class="subtitle">投稿管理</p>
+        </div>
+        <div id="admin-grid"></div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('admin-login').addEventListener('click', async () => {
+            const password = document.getElementById('admin-password').value;
+            const { error } = await db.auth.signInWithPassword({
+                email: 'riku01272017@gmail.com',
+                password
+            });
+            if (error) {
+                document.getElementById('admin-error').style.display = 'block';
+            } else {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-room').style.display = 'block';
+                renderAdminPhotos();
+            }
+        });
+
+        document.getElementById('admin-password').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('admin-login').click();
+        });
+
+        async function renderAdminPhotos() {
+            if (!db) return;
+            const container = document.getElementById('admin-grid');
+            const { data: photos, error } = await db
+                .from('photos')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error || !photos) return;
+            container.innerHTML = '';
+
+            photos.forEach(photo => {
+                const card = document.createElement('div');
+                card.className = 'photo-card';
+                card.style.position = 'relative';
+
+                const img = document.createElement('img');
+                img.src = photo.image_url;
+                img.loading = 'lazy';
+                card.appendChild(img);
+
+                const info = document.createElement('div');
+                info.className = 'photo-info';
+                info.style.cssText = 'position: relative; padding-right: 2.5rem;';
+
+                if (photo.caption) {
+                    const caption = document.createElement('p');
+                    caption.className = 'photo-caption';
+                    caption.textContent = photo.caption;
+                    info.appendChild(caption);
+                }
+
+                const meta = document.createElement('span');
+                meta.className = 'photo-meta';
+                const parts = [];
+                if (photo.name) parts.push(photo.name);
+                if (photo.date) parts.push(photo.date);
+                meta.textContent = parts.join('  —  ');
+                info.appendChild(meta);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '×';
+                deleteBtn.className = 'admin-delete-btn';
+                deleteBtn.addEventListener('click', async () => {
+                    if (!confirm('この投稿を削除しますか？')) return;
+                    const fileName = photo.image_url.split('/').pop();
+                    await db.storage.from('photos').remove([fileName]);
+                    await db.from('photos').delete().eq('id', photo.id);
+                    card.remove();
+                });
+
+                card.appendChild(info);
+                card.appendChild(deleteBtn);
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

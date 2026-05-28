@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post - うつくしいけしき</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+        <a href="index.html">Home</a>
+        <a href="gallery.html">Keshiki</a>
+        <a href="post.html" class="active">Post</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+    <main class="container" style="font-size: 1.21em; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom: calc(38vh + 2rem);">
+        <div class="section-title" style="margin-bottom: 1.5rem;">
+            <h1>Post</h1>
+            <p class="subtitle">あなたのけしき</p>
+        </div>
+
+        <div id="post-form-wrapper" style="display:flex; gap: 2.5rem; align-items: flex-start; max-width: 540px; min-height: 180px;">
+            <input type="file" id="photo-input" accept="image/*">
+            <div id="upload-left" style="flex-shrink:0; width: 165px; display: flex; flex-direction: column; align-items: center;">
+                <label for="photo-input" id="upload-area">
+                    <p id="upload-text">+</p>
+                </label>
+                <div id="preview-container" style="display:none;">
+                    <img id="preview-img" alt="preview">
+                </div>
+                <div id="preview-actions" style="display:none;">
+                    <label for="photo-input" id="change-photo">変更する</label>
+                    <button type="button" id="delete-photo">削除する</button>
+                </div>
+            </div>
+            <div style="flex:1; display: flex; flex-direction: column; gap: 0.8rem; padding-top: 0.3rem;">
+                <input type="text" id="post-name" placeholder="名前 / Name" style="width: 100%; padding: 0.4rem 0;">
+                <textarea id="post-caption" placeholder="コメント / Caption" style="width: 100%; padding: 0.4rem 0; height: 4rem; resize: none;"></textarea>
+                <button id="post-submit" style="width: fit-content; padding: 0.5rem 1.8rem; align-self: center; margin-top: 5pt;">Post</button>
+                <p id="post-error" style="display:none; text-align:center; font-size:0.8rem; opacity:0.5;"></p>
+            </div>
+        </div>
+
+        <div id="post-thanks" style="display:none; max-width: 540px; min-height: 180px;">
+            <p style="margin-bottom: 0.3rem;">投稿ありがとうございます。</p>
+            <p style="font-size: 0.85rem; opacity: 0.6;">Thank you for sharing your keshiki.</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <a href="gallery.html" class="thanks-btn">けしきを見る</a>
+                <button type="button" id="post-again" class="thanks-btn">もう一度投稿する</button>
+            </div>
+        </div>
+    </main>
+
+    <a href="post.html" class="door-link">
+        <div class="door-frame">
+            <div class="door-panel">
+                <div class="door-knob"></div>
+            </div>
+        </div>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>

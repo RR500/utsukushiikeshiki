@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keshiki - うつくしいけしき</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+        <a href="index.html">Home</a>
+        <a href="gallery.html" class="active">Keshiki</a>
+        <a href="post.html">Post</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+    <main class="container wide" style="font-size: 1.21em;">
+        <div class="section-title">
+            <h1>Keshiki</h1>
+            <p class="subtitle">みんなのけしき</p>
+        </div>
+        <div id="photo-grid"></div>
+        <p id="empty-message" style="display:none; text-align:center; opacity:0.4; padding: 4rem 0; font-size: 0.9rem;">
+            まだ投稿がありません / No photos yet
+        </p>
+        <div id="load-more-wrapper" style="display:none; text-align:center; margin-top: 2rem;">
+            <button id="load-more-btn" style="padding: 0.5rem 1.8rem;">もっと見る / More</button>
+        </div>
+    </main>
+    <a href="post.html" class="door-link">
+        <div class="door-frame">
+            <div class="door-panel">
+                <div class="door-knob"></div>
+            </div>
+        </div>
+    </a>
+    <div id="lightbox" style="display:none;">
+        <div id="lightbox-overlay"></div>
+        <img id="lightbox-img" alt="">
+        <button id="lightbox-close">×</button>
+    </div>
+    <a href="admin.html" class="mouse-hole"></a>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
