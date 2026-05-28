@@ -282,7 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (postSubmit) {
         postSubmit.addEventListener('click', async () => {
             if (!compressedBlob) {
-                showError('写真を選んでください / Please choose a photo');
                 return;
             }
             if (!db) {
