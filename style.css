@@ -76,7 +76,7 @@ textarea {
 
 /* Navigation */
 nav {
-    padding: 2rem;
+    padding: 3.5rem 2rem 2rem;
     display: flex;
     justify-content: center;
 }
@@ -592,6 +592,11 @@ button:hover {
     body:has(#contact-form) main,
     body:has(.lang-group) main {
         padding-top: 21vh !important;
+    }
+
+    #post-form-wrapper {
+        max-width: 350px !important;
+        margin: 0 auto !important;
     }
 
     #photo-grid {
