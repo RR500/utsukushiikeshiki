@@ -75,10 +75,59 @@ document.addEventListener('DOMContentLoaded', () => {
     // ライトボックス
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
+    let allPhotos = [];
+    let currentLightboxIndex = 0;
+
+    function openLightbox(index) {
+        if (!lightbox || index < 0 || index >= allPhotos.length) return;
+        currentLightboxIndex = index;
+        lightboxImg.src = allPhotos[index].image_url;
+        lightbox.style.display = 'flex';
+    }
+
+    function showPrev() {
+        if (allPhotos.length === 0) return;
+        currentLightboxIndex = (currentLightboxIndex - 1 + allPhotos.length) % allPhotos.length;
+        lightboxImg.src = allPhotos[currentLightboxIndex].image_url;
+    }
+
+    function showNext() {
+        if (allPhotos.length === 0) return;
+        currentLightboxIndex = (currentLightboxIndex + 1) % allPhotos.length;
+        lightboxImg.src = allPhotos[currentLightboxIndex].image_url;
+    }
+
     if (lightbox) {
         document.getElementById('lightbox-overlay').addEventListener('click', () => lightbox.style.display = 'none');
         document.getElementById('lightbox-close').addEventListener('click', () => lightbox.style.display = 'none');
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') lightbox.style.display = 'none'; });
+        const prevBtn = document.getElementById('lightbox-prev');
+        const nextBtn = document.getElementById('lightbox-next');
+        if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+        if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.style.display !== 'flex') return;
+            if (e.key === 'Escape') lightbox.style.display = 'none';
+            if (e.key === 'ArrowLeft') showPrev();
+            if (e.key === 'ArrowRight') showNext();
+        });
+
+        // スワイプ対応
+        let touchStartX = 0;
+        let touchStartY = 0;
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        lightbox.addEventListener('touchend', (e) => {
+            const diffX = e.changedTouches[0].clientX - touchStartX;
+            const diffY = e.changedTouches[0].clientY - touchStartY;
+            // 横スワイプが縦より大きい場合のみ
+            if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0) showPrev();
+                else showNext();
+            }
+        }, { passive: true });
     }
 
     const PAGE_SIZE = 12;
@@ -98,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         photoGrid.innerHTML = '';
         currentPage = 0;
+        allPhotos = [];
         await loadMorePhotos();
 
         const loadMoreBtn = document.getElementById('load-more-btn');
@@ -118,6 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (error || !photos) return;
 
+        allPhotos.push(...photos);
+
         photos.forEach((photo, index) => {
             const card = document.createElement('div');
             card.className = 'photo-card';
@@ -130,10 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
             img.dataset.src = getThumbUrl(photo.image_url, 480);
             lazyObserver.observe(img);
             img.addEventListener('click', () => {
-                if (lightboxImg) {
-                    lightboxImg.src = photo.image_url;
-                    lightbox.style.display = 'flex';
-                }
+                const idx = allPhotos.findIndex(p => p.id === photo.id);
+                if (idx >= 0) openLightbox(idx);
             });
 
             card.appendChild(img);
@@ -187,7 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedName = localStorage.getItem('user-name');
         if (savedName) postNameInput.value = savedName;
         postNameInput.addEventListener('input', () => {
-            localStorage.setItem('user-name', postNameInput.value);
+            const trimmed = postNameInput.value.trim();
+            if (trimmed) {
+                localStorage.setItem('user-name', trimmed);
+            } else {
+                localStorage.removeItem('user-name');
+            }
         });
     }
 
@@ -233,6 +288,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!db) {
                 showError('Supabase の設定が必要です');
                 return;
+            }
+
+            // 管理人名のチェック
+            const inputName = (postNameInput?.value || '').trim().toLowerCase();
+            const reservedNames = ['管理人', '管理者', 'admin', 'administrator', 'えはや', 'ehaya'];
+            if (reservedNames.some(r => inputName === r.toLowerCase())) {
+                const { data: { session } } = await db.auth.getSession();
+                if (!session) {
+                    showError('この名前は使えません / This name is reserved');
+                    return;
+                }
             }
 
             postSubmit.disabled = true;

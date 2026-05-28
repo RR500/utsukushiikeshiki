@@ -17,7 +17,7 @@ body {
     color: var(--black);
     font-family: "Inter", "Noto Sans JP", sans-serif;
     font-weight: 500;
-    font-size: 1.08rem;
+    font-size: 1.24rem;
     line-height: 1.8;
     letter-spacing: 0.04em;
     -webkit-font-smoothing: antialiased;
@@ -145,7 +145,7 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0 2rem 7rem;
+    padding: 0 2rem 14rem;
 }
 
 .site-header h1 {
@@ -462,6 +462,50 @@ button:hover {
     color: var(--white);
 }
 
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 3rem;
+    letter-spacing: 0;
+    text-transform: none;
+    cursor: pointer;
+    z-index: 102;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    padding: 0;
+    transition: opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1;
+}
+
+#lightbox-prev {
+    left: 1rem;
+}
+
+#lightbox-next {
+    right: 1rem;
+}
+
+.lightbox-nav:hover {
+    opacity: 1;
+    background: none;
+    color: var(--white);
+}
+
+@media (max-width: 768px) {
+    .lightbox-nav {
+        display: none;
+    }
+}
+
 /* ドアリンク */
 .door-link {
     position: fixed;
@@ -587,16 +631,21 @@ button:hover {
         padding: 1rem 1rem 3rem;
     }
 
-    /* スマホ版で post/about/contact の配置を下げる */
+    /* スマホ版で post/contact の配置を下げる */
     body:has(#post-form-wrapper) main,
-    body:has(#contact-form) main,
-    body:has(.lang-group) main {
+    body:has(#contact-form) main {
         padding-top: 21vh !important;
     }
 
+    /* about は少し上め */
+    body:has(.lang-group) main {
+        padding-top: 12vh !important;
+    }
+
     #post-form-wrapper {
-        max-width: 350px !important;
-        margin: 0 auto !important;
+        max-width: 347px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 
     #photo-grid {
